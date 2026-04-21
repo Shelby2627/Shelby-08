@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical School GPA Calculator | Kikokotozi cha GPA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f4c3a;
+            --primary-light: #1a7a5e;
+            --secondary: #c17b3f;
+            --accent: #d4af37;
+            --danger: #991b1b;
+            --warning: #d97706;
+            --success: #059669;
+            --bg: #fdfcfb;
+            --card: #ffffff;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #fdfcfb, #f5f3ef);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 15px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Language Switcher */
+        .lang-switcher {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: var(--card);
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: 0 4px 15px var(--shadow);
+            display: flex;
+            gap: 5px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lang-btn:hover:not(.active) {
+            background: #f3f4f6;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin: 60px 0 40px;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Main Card */
+        .main-card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        /* Selection Section */
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        select, input {
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.1);
+        }
+
+        /* Courses Input */
+        .courses-section {
+            margin-top: 30px;
+        }
+
+        .courses-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .courses-header h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .credit-info {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .course-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .course-item {
+            display: grid;
+            grid-template-columns: 1fr 100px 100px;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .course-item:hover {
+            background: #f3f4f6;
+            border-color: var(--primary-light);
+        }
+
+        .course-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .course-code {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .course-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .course-credits {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .marks-input {
+            position: relative;
+        }
+
+        .marks-input input {
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .gp-display {
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+            padding: 12px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+        }
+
+        /* Calculate Button */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--shadow);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 100%);
+            border: 2px solid var(--border);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'Crimson Pro', serif;
+            color: var(--primary);
+        }
+
+        .result-grade {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Status Card */
+        .status-card {
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid;
+            text-align: center;
+        }
+
+        .status-card.safe {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-color: var(--success);
+        }
+
+        .status-card.danger {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-color: var(--danger);
+        }
+
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .status-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .status-card.safe .status-title {
+            color: var(--success);
+        }
+
+        .status-card.danger .status-title {
+            color: var(--danger);
+        }
+
+        .status-message {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Target Calculator */
+        .target-section {
+            margin-top: 25px;
+            padding: 25px;
+            background: #fffbeb;
+            border: 2px solid var(--warning);
+            border-radius: 15px;
+        }
+
+        .target-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--warning);
+            margin-bottom: 15px;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        .target-info {
+            font-size: 1rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .target-gpa {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--warning);
+            margin: 10px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .course-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .selection-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .main-card {
+                padding: 20px;
+            }
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="sw">Kiswahili</button>
+        <button class="lang-btn" data-lang="en">English</button>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1 data-i18n="title">Kikokotozi cha GPA</h1>
+            <p class="subtitle" data-i18n="subtitle">Kokotoa GPA yako kwa urahisi</p>
+        </header>
+
+        <!-- Main Card -->
+        <div class="main-card">
+            <!-- Selection Section -->
+            <div class="selection-grid">
+                <div class="form-group">
+                    <label for="program" data-i18n="selectProgram">Chagua Course Yako</label>
+                    <select id="program">
+                        <option value="" data-i18n="choosePlaceholder">-- Chagua --</option>
+                        <option value="medicine">Doctor of Medicine (MD)</option>
+                        <option value="radiology">Radiology</option>
+                        <option value="physiotherapy">Physiotherapy</option>
+                        <option value="audiology">Audiology & Speech Pathology</option>
+                        <option value="occupational">Occupational Therapy</option>
+                        <option value="psychology">Medical Psychology</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="semester" data-i18n="selectSemester">Chagua Semester</label>
+                    <select id="semester" disabled>
+                        <option value="" data-i18n="choosePlaceholder">-- Chagua --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Courses Section -->
+            <div id="coursesSection" class="courses-section hidden">
+                <div class="courses-header">
+                    <h2 data-i18n="courses">Masomo</h2>
+                    <div class="credit-info">
+                        <span data-i18n="totalCredits">Jumla ya Credits:</span> <strong id="totalCredits">0</strong>
+                    </div>
+                </div>
+
+                <div id="courseGrid" class="course-grid">
+                    <!-- Courses will be dynamically loaded here -->
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="calculateBtn" data-i18n="calculate">Kokotoa GPA</button>
+                    <button class="btn btn-secondary" id="resetBtn" data-i18n="reset">Futa Yote</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="results-section">
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="semesterGPA">GPA ya Semester</div>
+                        <div class="result-value" id="semesterGPA">0.00</div>
+                        <div class="result-grade" id="semesterGrade">-</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="totalScore">Jumla ya Score</div>
+                        <div class="result-value" id="totalScore">0.00</div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-label" data-i18n="avgGP">Wastani wa GP</div>
+                        <div class="result-value" id="avgGP">0.00</div>
+                    </div>
+                </div>
+
+                <div id="statusCard" class="status-card">
+                    <div class="status-icon" id="statusIcon">🎯</div>
+                    <div class="status-title" id="statusTitle" data-i18n="calculating">Kinakokotoa...</div>
+                    <div class="status-message" id="statusMessage"></div>
+                </div>
+
+                <div id="targetSection" class="target-section hidden">
+                    <div class="target-title" data-i18n="targetTitle">🎯 Lengo la Semester Inayofuata</div>
+                    <div class="target-info" id="targetInfo"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // TRANSLATIONS
+        // ==========================================
+        const translations = {
+            sw: {
+                title: "Kikokotozi cha GPA",
+                subtitle: "Kokotoa GPA yako kwa urahisi",
+                selectProgram: "Chagua Course Yako",
+                selectSemester: "Chagua Semester",
+                choosePlaceholder: "-- Chagua --",
+                courses: "Masomo",
+                totalCredits: "Jumla ya Credits:",
+                marks: "Marks (%)",
+                gradePoints: "GP",
+                calculate: "Kokotoa GPA",
+                reset: "Futa Yote",
+                semesterGPA: "GPA ya Semester",
+                totalScore: "Jumla ya Score",
+                avgGP: "Wastani wa GP",
+                calculating: "Kinakokotoa...",
+                safeZone: "🎉 Salama! Hongera!",
+                safeMessage: "GPA yako ni juu ya lengo la 3.8. Endelea hivyo!",
+                dangerZone: "⚠️ Tahadhari!",
+                dangerMessage: "GPA yako ni chini ya lengo la 3.8. Jitahidi zaidi semester ijayo!",
+                targetTitle: "🎯 Lengo la Semester Inayofuata",
+                targetNeed: "Unahitaji GPA ya angalau",
+                targetNext: "semester ijayo ili ufike GPA ya 3.8 overall.",
+                targetImpossible: "Huwezi kufikia GPA ya 3.8 hata kwa GPA ya 5.0 semester ijayo. Lakini endelea kujitahidi!",
+                targetAlready: "Tayari uko salama! Endelea kudumisha GPA yako juu ya 3.8!",
+                credits: "Credits"
+            },
+            en: {
+                title: "GPA Calculator",
+                subtitle: "Calculate your GPA easily",
+                selectProgram: "Select Your Program",
+                selectSemester: "Select Semester",
+                choosePlaceholder: "-- Choose --",
+                courses: "Courses",
+                totalCredits: "Total Credits:",
+                marks: "Marks (%)",
+                gradePoints: "GP",
+                calculate: "Calculate GPA",
+                reset: "Reset All",
+                semesterGPA: "Semester GPA",
+                totalScore: "Total Score",
+                avgGP: "Average GP",
+                calculating: "Calculating...",
+                safeZone: "🎉 Safe Zone! Congratulations!",
+                safeMessage: "Your GPA is above the target of 3.8. Keep it up!",
+                dangerZone: "⚠️ Warning!",
+                dangerMessage: "Your GPA is below the target of 3.8. Work harder next semester!",
+                targetTitle: "🎯 Next Semester Target",
+                targetNeed: "You need at least a GPA of",
+                targetNext: "next semester to achieve an overall GPA of 3.8.",
+                targetImpossible: "You cannot reach a GPA of 3.8 even with a perfect 5.0 next semester. But keep working hard!",
+                targetAlready: "You're already safe! Keep maintaining your GPA above 3.8!",
+                credits: "Credits"
+            }
+        };
+
+        let currentLang = 'sw';
+
+        // ==========================================
+        // PROGRAM DATA
+        // ==========================================
+        const programData = {
+            medicine: {
+                name: "Doctor of Medicine (MD)",
+                semesters: 10,
+                data: {
+                    1: {credits: 65.8, courses: [
+                        {code: "AN 100", name: "Gross Anatomy and Histology", credits: 30.1},
+                        {code: "BC 103", name: "Biochemistry & Molecular Biology", credits: 20.0},
+                        {code: "IT 101", name: "ICT & Communication Skills", credits: 8.0},
+                        {code: "PF 110", name: "Professionalism & Ethics in Health and Research", credits: 7.7}
+                    ]},
+                    2: {credits: 65.8, courses: [
+                        {code: "AN 110", name: "Dissectional Anatomy and Embryology", credits: 24.4},
+                        {code: "BS 100", name: "Behavioural Science", credits: 12.5},
+                        {code: "EO 100", name: "Community Health Organization", credits: 5.9},
+                        {code: "PH 100", name: "Physiology", credits: 23.0}
+                    ]},
+                    3: {credits: 68.9, courses: [
+                        {code: "MI 201", name: "Microbiology/Immunology", credits: 20.3},
+                        {code: "PE 200", name: "Parasitology & Entomology", credits: 12.0},
+                        {code: "MP 200.01", name: "Principles Of Pathology", credits: 10.0},
+                        {code: "MP 200.02", name: "Haematology and Blood Transfusion", credits: 5.0},
+                        {code: "ER 200", name: "Epidemiology Biostatistics & research Methods", credits: 10.8},
+                        {code: "HS 201", name: "Health Systems", credits: 10.8}
+                    ]},
+                    4: {credits: 65.6, courses: [
+                        {code: "EO 200", name: "Community Health Practice", credits: 7.0},
+                        {code: "CP 200", name: "Basic and Clinical Pharmacology", credits: 24.8},
+                        {code: "MP 200.03", name: "Head, neck, Check, Abdomen, cns And Mss", credits: 10.8},
+                        {code: "MP 200.04", name: "Systemic Pathology", credits: 10.0},
+                        {code: "PS 200", name: "Psychopathology", credits: 13.0}
+                    ]},
+                    5: {credits: 65.8, courses: [
+                        {code: "MD 300", name: "Management of Diseases", credits: 50.7},
+                        {code: "RO 300", name: "Radiology", credits: 15.1}
+                    ]},
+                    6: {credits: 65.8, courses: [
+                        {code: "PF 300", name: "Professionalism and Ethics in Medical Practice", credits: 13.7},
+                        {code: "MD 301", name: "Communicable and Non-communicable Disease Control", credits: 35.0},
+                        {code: "ME 310", name: "Research Proposal Development", credits: 5.0},
+                        {code: "OM 300", name: "Occupational Medicine", credits: 5.2},
+                        {code: "MT 300", name: "Management and Entrepreneurship", credits: 6.9}
+                    ]},
+                    7: {credits: 131.6, courses: [
+                        {code: "MS 510", name: "Surgery", credits: 24.2},
+                        {code: "OG 510", name: "Obstetrics and Gynaecology", credits: 24.2},
+                        {code: "MH 510", name: "Paediatrics and Child Health", credits: 24.2},
+                        {code: "IM 510", name: "Internal Medicine", credits: 24.2},
+                        {code: "MC 510", name: "Community health", credits: 24.2},
+                        {code: "ME 510", name: "Research Data analysis and Reporting", credits: 10.6}
+                    ]},
+                    8: {credits: 131.6, courses: [
+                        {code: "MS 510", name: "Surgery", credits: 24.2},
+                        {code: "OG 510", name: "Obstetrics and Gynaecology", credits: 24.2},
+                        {code: "MH 510", name: "Paediatrics and Child Health", credits: 24.2},
+                        {code: "IM 510", name: "Internal Medicine", credits: 24.2},
+                        {code: "MC 510", name: "Community health", credits: 24.2},
+                        {code: "ME 510", name: "Research Data analysis and Reporting", credits: 10.6}
+                    ]},
+                    9: {credits: 131.6, courses: [
+                        {code: "MY 410", name: "Psychiatry", credits: 13.16},
+                        {code: "MA 410", name: "Anaesthesiology and Critical care Medicine", credits: 13.16},
+                        {code: "OP 410", name: "Ophthalmology", credits: 13.16},
+                        {code: "EM 410", name: "Emergency Medicine", credits: 13.16},
+                        {code: "MS 410", name: "Surgery", credits: 13.16},
+                        {code: "IM 410", name: "Internal Medicine", credits: 13.16},
+                        {code: "MG 410", name: "Obstetrics and Gynaecology", credits: 13.16},
+                        {code: "MH 410", name: "Paediatrics and Child Health", credits: 13.16},
+                        {code: "OL 410", name: "Otorhinolaryngology", credits: 13.16},
+                        {code: "OT 410", name: "Orthopaedics, Traumatology and Neurosurgery", credits: 13.16}
+                    ]},
+                    10: {credits: 131.6, courses: [
+                        {code: "MY 410", name: "Psychiatry", credits: 13.16},
+                        {code: "MA 410", name: "Anaesthesiology and Critical care Medicine", credits: 13.16},
+                        {code: "OP 410", name: "Ophthalmology", credits: 13.16},
+                        {code: "EM 410", name: "Emergency Medicine", credits: 13.16},
+                        {code: "MS 410", name: "Surgery", credits: 13.16},
+                        {code: "IM 410", name: "Internal Medicine", credits: 13.16},
+                        {code: "MG 410", name: "Obstetrics and Gynaecology", credits: 13.16},
+                        {code: "MH 410", name: "Paediatrics and Child Health", credits: 13.16},
+                        {code: "OL 410", name: "Otorhinolaryngology", credits: 13.16},
+                        {code: "OT 410", name: "Orthopaedics, Traumatology and Neurosurgery", credits: 13.16}
+                    ]}
+                }
+            },
+            radiology: {
+                name: "Radiology",
+                semesters: 8,
+                data: {
+                    1: {credits: 65.8, courses: [
+                        {code: "AN 100", name: "Gross Anatomy and Histology", credits: 30.1},
+                        {code: "BC 103", name: "Biochemistry & Molecular Biology", credits: 20.0},
+                        {code: "IT 101", name: "ICT & Communication Skills", credits: 8.0},
+                        {code: "PF 110", name: "Professionalism & Ethics in Health and Research", credits: 7.7}
+                    ]},
+                    2: {credits: 65.8, courses: [
+                        {code: "PH 100", name: "Physiology", credits: 23.0},
+                        {code: "RP 105", name: "Radiation Physics", credits: 13.0},
+                        {code: "RB 105", name: "Radiobiology", credits: 10.0},
+                        {code: "CI 105", name: "Cross-sectional Imaging Anatomy", credits: 13.8}
+                    ]},
+                    3: {credits: 65.8, courses: [
+                        {code: "HS 201", name: "Health Systems and Development", credits: 10.8},
+                        {code: "EQ 205", name: "Radiography, Radiotherapy, and Nuclear Medicine Equipment", credits: 14.0},
+                        {code: "MP 200.01", name: "Principles of Pathology", credits: 10.0},
+                        {code: "MP 200.02", name: "Haematology and Blood Transfusion", credits: 5.0},
+                        {code: "NM 205", name: "Nuclear Medicine", credits: 10.0},
+                        {code: "RA 205", name: "Chest, Skeletal, and Abdominal pelvic radiography", credits: 16.0}
+                    ]},
+                    4: {credits: 65.8, courses: [
+                        {code: "RP 205", name: "Special Radiographic Procedures and Radio-fluoroscopy", credits: 17.9},
+                        {code: "PR 205", name: "Chest, Skeletal, and Abdominal hematopoietic Radiographic Pathology", credits: 17.0},
+                        {code: "FO 205", name: "Fundamentals of Oncology", credits: 15.9},
+                        {code: "US 205", name: "General Ultrasound", credits: 15.0}
+                    ]},
+                    5: {credits: 65.8, courses: [
+                        {code: "TP 305", name: "Radiotherapy treatment planning", credits: 18.7},
+                        {code: "PR 305", name: "Abdomen, Pelvis, and CNS Radiographic Pathology", credits: 18.9},
+                        {code: "US 305", name: "Small parts Ultrasound and Echocardiography", credits: 17.4},
+                        {code: "ER 200", name: "Epidemiology, Biostatistics and Research Methods", credits: 10.8}
+                    ]},
+                    6: {credits: 65.8, courses: [
+                        {code: "TD 305", name: "Radiotherapy delivery", credits: 26.9},
+                        {code: "CT 305", name: "CT Imaging techniques and protocols", credits: 13.5},
+                        {code: "MR 305", name: "MR Imaging techniques and protocols", credits: 13.5},
+                        {code: "ME 310", name: "Research Proposal Development", credits: 5.0},
+                        {code: "MT 300", name: "Management and entrepreneurship", credits: 6.9}
+                    ]},
+                    7: {credits: 65.8, courses: [
+                        {code: "BR 405", name: "Brachytherapy", credits: 15.4},
+                        {code: "OM 405", name: "Oral radiography and mammography", credits: 15.0},
+                        {code: "TP 405", name: "Radiotherapy Treatment Planning and Nuclear Imaging Practice", credits: 17.7},
+                        {code: "DR 405", name: "Radiography and ultrasound practice", credits: 17.7}
+                    ]},
+                    8: {credits: 65.8, courses: [
+                        {code: "FW 405", name: "Radiography and Radiotherapy Field Work", credits: 16.0},
+                        {code: "RR 405", name: "Research Data analysis and Reporting", credits: 6.8},
+                        {code: "RD 405", name: "Radiotherapy Delivery and Radionuclide therapy practice", credits: 21.5},
+                        {code: "TD 405", name: "Computed Tomography and Magnetic Resonance Imaging Technologies", credits: 21.5}
+                    ]}
+                }
+            },
+            physiotherapy: {
+                name: "Physiotherapy",
+                semesters: 8,
+                data: {
+                    1: {credits: 65.8, courses: [
+                        {code: "AN 100", name: "Gross Anatomy and Histology", credits: 30.1},
+                        {code: "BC 100", name: "Biochemistry and Molecular Biology", credits: 20.0},
+                        {code: "IT 110", name: "ICT and Communication skills", credits: 8.0},
+                        {code: "PF 110", name: "Professionalism and ethics in Health and Research", credits: 7.7}
+                    ]},
+                    2: {credits: 65.8, courses: [
+                        {code: "AN 110", name: "Dissectional Anatomy and Embryology", credits: 24.4},
+                        {code: "PH 100", name: "Physiology", credits: 23.0},
+                        {code: "BS 110", name: "Behavioural science", credits: 12.5},
+                        {code: "PT 220", name: "Basic Movement science", credits: 5.9}
+                    ]},
+                    3: {credits: 63.98, courses: [
+                        {code: "HS 201", name: "Health System and Development", credits: 10.8},
+                        {code: "MI 201", name: "Introduction to microbiology and immunology", credits: 20.3},
+                        {code: "ER 201", name: "Epidemiology, Biostatistics & research Methods", credits: 10.8},
+                        {code: "PE 200", name: "Introduction to parasitology and entomology", credits: 12.0},
+                        {code: "MP 200.01", name: "Principles Of Pathology", credits: 10.0}
+                    ]},
+                    4: {credits: 65.8, courses: [
+                        {code: "PT 211", name: "Physiotherapy techniques", credits: 14.5},
+                        {code: "PT 221", name: "Basic patient care", credits: 5.5},
+                        {code: "PT 202", name: "Junior Physiotherapy Clinical rotations", credits: 11.0},
+                        {code: "CP 200", name: "Basic and clinical pharmacology", credits: 24.8},
+                        {code: "PT 222", name: "Ergonomics and Kinesiology", credits: 10.0}
+                    ]},
+                    5: {credits: 65.8, courses: [
+                        {code: "CP 300", name: "Child Health and Adolescence Physiotherapy", credits: 26.0},
+                        {code: "DR 300", name: "Diagnostic radiography", credits: 15.4},
+                        {code: "MT 300", name: "Medical exercise therapy", credits: 24.4}
+                    ]},
+                    6: {credits: 65.8, courses: [
+                        {code: "MT 301", name: "Management and entrepreneurship", credits: 6.9},
+                        {code: "PT 301", name: "Physiotherapy in critical care", credits: 14.3},
+                        {code: "PT 302", name: "Research project proposal", credits: 12.6},
+                        {code: "PT 303", name: "Field work practicum I", credits: 32.0}
+                    ]},
+                    7: {credits: 65.8, courses: [
+                        {code: "PT 401", name: "Critical and palliative care", credits: 14.3},
+                        {code: "PT 400", name: "Research project", credits: 12.6},
+                        {code: "PT 402", name: "Health management and administration", credits: 13.3},
+                        {code: "PT 404", name: "Field work practicum II", credits: 25.6}
+                    ]},
+                    8: {credits: 65.8, courses: [
+                        {code: "PT 403", name: "Advanced Physiotherapy practice", credits: 65.8}
+                    ]}
+                }
+            },
+            audiology: {
+                name: "Audiology & Speech Pathology",
+                semesters: 8,
+                data: {
+                    1: {credits: 65.8, courses: [
+                        {code: "SC 100", name: "Communication Sciences", credits: 13.0},
+                        {code: "PF 110", name: "Professionalism and ethics in Health and Research", credits: 7.7},
+                        {code: "IT 110", name: "ICT & Communication skills", credits: 8.0},
+                        {code: "PA 100", name: "Anatomy and Physiology of Speech and Hearing", credits: 13.7},
+                        {code: "LP 100", name: "Linguistics and Phonetics", credits: 12.0},
+                        {code: "EA 100", name: "Electronics and Acoustics", credits: 10.4}
+                    ]},
+                    2: {credits: 65.8, courses: [
+                        {code: "OL 101", name: "Otolaryngology", credits: 7.0},
+                        {code: "NR 101", name: "Neurology", credits: 10.0},
+                        {code: "CP 101", name: "Clinical Psychology", credits: 9.9},
+                        {code: "SP 101", name: "Speech Language Pathology", credits: 19.4},
+                        {code: "AD 101", name: "Audiology", credits: 15.5},
+                        {code: "HE 101", name: "Human Rights and Environment", credits: 4.0}
+                    ]},
+                    3: {credits: 65.8, courses: [
+                        {code: "NH 200", name: "Noise and Hearing Conservation", credits: 8.8},
+                        {code: "VD 200", name: "Voice and its Disorders", credits: 8.8},
+                        {code: "SD 200", name: "Speech Sound Disorders", credits: 8.8},
+                        {code: "DB 200", name: "Diagnostic Audiology Behavioural Tests", credits: 9.6},
+                        {code: "AL 200", name: "Amplification Devices", credits: 9.0},
+                        {code: "HS 201", name: "Health System and Development", credits: 10.0},
+                        {code: "ER 201", name: "Epidemiology Biostatistics & research Methods", credits: 10.8}
+                    ]},
+                    4: {credits: 65.8, courses: [
+                        {code: "SD 201", name: "Motor Speech Disorders in Children", credits: 15.2},
+                        {code: "LD 201", name: "Language Disorders in Children", credits: 15.2},
+                        {code: "PD 201", name: "Diagnostic Audiology: Physiological Tests", credits: 17.7},
+                        {code: "ID 201", name: "Implantable Hearing devices", credits: 17.7}
+                    ]},
+                    5: {credits: 65.8, courses: [
+                        {code: "SS 400", name: "Structural Anomalies and Speech Disorders", credits: 11.9},
+                        {code: "FL 400", name: "Fluency and its Disorders", credits: 11.6},
+                        {code: "PA 400", name: "Paediatric Audiology", credits: 11.5},
+                        {code: "AC 400", name: "Aural Rehabilitation in Children", credits: 9.0},
+                        {code: "SP 400.1", name: "Clinicals in Speech Language Pathology", credits: 11.4},
+                        {code: "AD 400.1", name: "Clinicals in Audiology", credits: 10.4}
+                    ]},
+                    6: {credits: 65.8, courses: [
+                        {code: "MD 500", name: "Motor Speech Disorders in adults", credits: 11.0},
+                        {code: "LD 500", name: "Language Disorders in adults", credits: 11.0},
+                        {code: "AA 500", name: "Aural Rehabilitation in Adults", credits: 13.5},
+                        {code: "AU 500", name: "Audiology in Practice", credits: 13.3},
+                        {code: "SP 500.1", name: "Clinical Attachment in Speech Language Pathology", credits: 8.5},
+                        {code: "AD 500.1", name: "Clinical Attachment in audiology", credits: 8.5}
+                    ]},
+                    7: {credits: 65.8, courses: [
+                        {code: "RP 600", name: "Research Project", credits: 25.5},
+                        {code: "SP 600.1", name: "Clinical Attachment in Speech and Language Pathology", credits: 14.0},
+                        {code: "AD 600.1", name: "Clinical attachment in audiology", credits: 14.5},
+                        {code: "HM 600", name: "Health management and administration", credits: 11.8}
+                    ]},
+                    8: {credits: 65.8, courses: [
+                        {code: "SP 700.1", name: "Clinicals in Speech Language Pathology", credits: 19.9},
+                        {code: "AD 700.1", name: "Clinicals in audiology", credits: 19.4},
+                        {code: "RP 800", name: "Research Project", credits: 26.5}
+                    ]}
+                }
+            },
+            occupational: {
+                name: "Occupational Therapy",
+                semesters: 8,
+                data: {
+                    1: {credits: 65.0, courses: [
+                        {code: "AN 110", name: "Anatomy", credits: 30.1},
+                        {code: "BC 110", name: "Biochemistry and Molecular Biology", credits: 20.0},
+                        {code: "IT 110", name: "ICT and Communication skills", credits: 8.0},
+                        {code: "PF 110", name: "Professionalism and ethics in Health Practice", credits: 7.7}
+                    ]},
+                    2: {credits: 55.0, courses: [
+                        {code: "PH 100", name: "Physiology", credits: 23.0},
+                        {code: "BS 100", name: "Behavioural Science", credits: 12.5},
+                        {code: "OT 100", name: "Foundation of Occupational Therapy practice level I", credits: 8.5},
+                        {code: "OT 101", name: "Basic Movement Science", credits: 11.8},
+                        {code: "OT 102", name: "Basic Life Support", credits: 10.0}
+                    ]},
+                    3: {credits: 68.8, courses: [
+                        {code: "MP 200.01", name: "Pathology", credits: 10.0},
+                        {code: "OT 200", name: "Foundation of Occupational Therapy Practice level II", credits: 18.8},
+                        {code: "OT 201", name: "Clinical Science in Paediatrics", credits: 14.0},
+                        {code: "OT 202", name: "Clinical Science in Psychiatry", credits: 14.0},
+                        {code: "OT 203", name: "Community Health and Rehabilitation", credits: 9.0}
+                    ]},
+                    4: {credits: 65.8, courses: [
+                        {code: "CP 200.01", name: "Basic and Clinical Pharmacology", credits: 12.2},
+                        {code: "OT 208", name: "Foundation to physical dysfunction", credits: 7.4},
+                        {code: "OT 204", name: "Occupational Therapy Technique level I", credits: 7.4},
+                        {code: "OT 205", name: "Occupational Therapy in Psychiatry Level I", credits: 7.4},
+                        {code: "OT 206", name: "Occupational Therapy in Early Development", credits: 7.4},
+                        {code: "OT 207", name: "Field Placement Level I", credits: 24.0}
+                    ]},
+                    5: {credits: 65.8, courses: [
+                        {code: "OT 300", name: "Occupational Therapy in Paediatric Management", credits: 6.0},
+                        {code: "OT 350", name: "Occupational Therapy in psychiatry Level II", credits: 6.0},
+                        {code: "ER 201", name: "Epidemiology, Biostatistics & research Methods", credits: 10.8},
+                        {code: "OT 340", name: "Occupational therapy technique Level II", credits: 6.0},
+                        {code: "ON 350", name: "Occupational Therapy in Neurology", credits: 6.0},
+                        {code: "DR 350", name: "Diagnostic Radiography", credits: 9.1},
+                        {code: "FW 350", name: "Field Placement Level II", credits: 21.9}
+                    ]},
+                    6: {credits: 67.0, courses: [
+                        {code: "RP 360", name: "Research Proposal Development", credits: 6.0},
+                        {code: "OT 360", name: "Occupational Therapy in psychiatry Level III", credits: 6.0},
+                        {code: "OD 360", name: "Occupational therapy in Learning Disorders", credits: 10.4},
+                        {code: "TO 360", name: "Occupational therapy in Orthopaedics and Trauma", credits: 10.4},
+                        {code: "HS 360", name: "Health Systems and Development", credits: 10.0},
+                        {code: "FW 360", name: "Field Placement Level III", credits: 24.2}
+                    ]},
+                    7: {credits: 65.8, courses: [
+                        {code: "OR 470", name: "Research project", credits: 12.0},
+                        {code: "OT 401", name: "Occupational Therapy in Critical and palliative care", credits: 7.0},
+                        {code: "OT 470", name: "Occupational Therapy in psychiatry Level IV", credits: 7.0},
+                        {code: "HM 470", name: "Health Service management, leadership, and Entrepreneurship", credits: 12.3},
+                        {code: "OT 300", name: "Occupational Therapy in Common Physical Conditions", credits: 7.0},
+                        {code: "FW 470", name: "Field Placement IV", credits: 20.5}
+                    ]},
+                    8: {credits: 65.8, courses: [
+                        {code: "OT 480", name: "Occupational Therapy in Psychiatry Level V", credits: 7.0},
+                        {code: "OT 400", name: "Occupational therapy in Childhood & Adolescence", credits: 7.0},
+                        {code: "OD 480", name: "Occupational Therapy in Physical Dysfunction Management", credits: 7.0},
+                        {code: "CP 400", name: "Field elective placement", credits: 26.8},
+                        {code: "OR 480", name: "Research project", credits: 18.0}
+                    ]}
+                }
+            },
+            psychology: {
+                name: "Medical Psychology",
+                semesters: 8,
+                data: {
+                    1: {credits: 65.8, courses: [
+                        {code: "AN 110", name: "Anatomy", credits: 30.1},
+                        {code: "BC 110", name: "Biochemistry and Molecular Biology", credits: 20.0},
+                        {code: "IT 110", name: "ICT and Communication skills", credits: 8.0},
+                        {code: "PF 110", name: "Professionalism and ethics in Health Practice", credits: 7.7}
+                    ]},
+                    2: {credits: 65.8, courses: [
+                        {code: "MP 100", name: "Introduction to Psychology", credits: 12.7},
+                        {code: "MP 101", name: "Developmental Psychology I", credits: 13.1},
+                        {code: "MP 102", name: "Social Psychology", credits: 13.1},
+                        {code: "MP 103", name: "Cognitive Psychology and Learning", credits: 13.7},
+                        {code: "MP 104", name: "Personality", credits: 13.2}
+                    ]},
+                    3: {credits: 77.6, courses: [
+                        {code: "PH 100", name: "Physiology", credits: 23.0},
+                        {code: "ER 201", name: "Epidemiology and Biostatistics", credits: 10.8},
+                        {code: "MP 200", name: "Developmental Psychology II", credits: 13.6},
+                        {code: "MP 201", name: "Positive Psychology", credits: 13.0},
+                        {code: "MP 202", name: "Counselling Skills", credits: 17.2}
+                    ]},
+                    4: {credits: 65.8, courses: [
+                        {code: "MP 203", name: "Psychological Assessment", credits: 20.8},
+                        {code: "MP 204", name: "Psychopathology", credits: 17.1},
+                        {code: "MP 205", name: "Abnormal Psychology", credits: 11.6},
+                        {code: "MP 206", name: "Ethics and Legal Issues in Psychological Practice", credits: 8.5},
+                        {code: "MP 207", name: "Biopsychology and Neuropsychology", credits: 7.8}
+                    ]},
+                    5: {credits: 65.8, courses: [
+                        {code: "MP 300", name: "Introduction to Forensic Psychology", credits: 10.0},
+                        {code: "MP 301", name: "Substance Abuse", credits: 12.2},
+                        {code: "MP 302", name: "Psychopharmacology", credits: 7.6},
+                        {code: "MP 303", name: "Introduction to Psychological Tests and Measurement (Psychometrics)", credits: 14.5},
+                        {code: "MP 304", name: "Research Proposal Development", credits: 9.7},
+                        {code: "MP 305", name: "Clinical Apprenticeship I", credits: 11.8}
+                    ]},
+                    6: {credits: 65.8, courses: [
+                        {code: "MP 306", name: "Health Psychology", credits: 9.6},
+                        {code: "MP 307", name: "Loss, Grief, and Bereavement", credits: 10.0},
+                        {code: "MP 308", name: "Psychotherapy (Psychoeducation, CBT, MI & IPT)", credits: 16.8},
+                        {code: "MP 309", name: "Clinical Apprenticeship II", credits: 29.4}
+                    ]},
+                    7: {credits: 65.8, courses: [
+                        {code: "MP 400", name: "Child and Adolescent Psychopathology", credits: 10.8},
+                        {code: "HS 300", name: "Health service management, leadership, and entrepreneurship", credits: 6.9},
+                        {code: "MP 401", name: "Couple and Family Therapy", credits: 11.8},
+                        {code: "MP 402", name: "Research Data Analysis and Reporting", credits: 10.6},
+                        {code: "MP 403", name: "Clinical Apprenticeship III", credits: 25.7}
+                    ]},
+                    8: {credits: 65.8, courses: [
+                        {code: "MP 404", name: "Industrial and Organizational Psychology", credits: 6.0},
+                        {code: "MP 405", name: "Mental Health Promotion", credits: 6.0},
+                        {code: "MP 406", name: "Introduction to Rehabilitation Psychology", credits: 6.0},
+                        {code: "MP 407", name: "Clinical Apprenticeship IV", credits: 47.8}
+                    ]}
+                }
+            }
+        };
+
+        // ==========================================
+        // GRADE POINT CALCULATION
+        // ==========================================
+        function calculateGP(marks) {
+            const x = parseFloat(marks);
+            
+            if (isNaN(x) || x < 0 || x > 100) return 0;
+            
+            if (x >= 75 && x <= 100) {
+                // A: Y = 0.024x + 2.6
+                return 0.024 * x + 2.6;
+            } else if (x >= 70 && x < 75) {
+                // B+: Y = 0.2x - 10.5
+                return 0.2 * x - 10.5;
+            } else if (x >= 60 && x < 70) {
+                // B: Y = 0.08x - 2.1
+                return 0.08 * x - 2.1;
+            } else if (x >= 50 && x < 60) {
+                // C: Y = 0.07x - 1.5
+                return 0.07 * x - 1.5;
+            } else if (x >= 40 && x < 50) {
+                // D: Y = 0.04x - 0.1
+                return 0.04 * x - 0.1;
+            } else {
+                // E: Y = (1/28)x
+                return (1/28) * x;
+            }
+        }
+
+        function getLetterGrade(gp) {
+            if (gp >= 4.4 && gp <= 5.0) return 'A';
+            if (gp >= 3.5 && gp < 4.4) return 'B+';
+            if (gp >= 2.7 && gp < 3.5) return 'B';
+            if (gp >= 2.0 && gp < 2.7) return 'C';
+            if (gp >= 1.5 && gp < 2.0) return 'D';
+            return 'E';
+        }
+
+        // ==========================================
+        // LANGUAGE SWITCHER
+        // ==========================================
+        function updateLanguage(lang) {
+            currentLang = lang;
+            
+            // Update all translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                        el.placeholder = translations[lang][key];
+                    } else {
+                        el.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+
+        // ==========================================
+        // PROGRAM & SEMESTER SELECTION
+        // ==========================================
+        const programSelect = document.getElementById('program');
+        const semesterSelect = document.getElementById('semester');
+        const coursesSection = document.getElementById('coursesSection');
+        const courseGrid = document.getElementById('courseGrid');
+        const totalCreditsEl = document.getElementById('totalCredits');
+
+        programSelect.addEventListener('change', function() {
+            const program = this.value;
+            semesterSelect.disabled = !program;
+            semesterSelect.innerHTML = `<option value="">${translations[currentLang].choosePlaceholder}</option>`;
+            coursesSection.classList.add('hidden');
+            
+            if (program && programData[program]) {
+                const semesters = programData[program].semesters;
+                for (let i = 1; i <= semesters; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = `Semester ${i}`;
+                    semesterSelect.appendChild(option);
+                }
+            }
+        });
+
+        semesterSelect.addEventListener('change', function() {
+            const program = programSelect.value;
+            const semester = parseInt(this.value);
+            
+            if (program && semester && programData[program].data[semester]) {
+                loadCourses(program, semester);
+                coursesSection.classList.remove('hidden');
+                document.getElementById('resultsSection').classList.remove('show');
+            }
+        });
+
+        function loadCourses(program, semester) {
+            const data = programData[program].data[semester];
+            courseGrid.innerHTML = '';
+            totalCreditsEl.textContent = data.credits.toFixed(1);
+            
+            data.courses.forEach((course, index) => {
+                const courseItem = document.createElement('div');
+                courseItem.className = 'course-item';
+                courseItem.innerHTML = `
+                    <div class="course-info">
+                        <div class="course-code">${course.code}</div>
+                        <div class="course-name">${course.name}</div>
+                        <div class="course-credits">${course.credits} ${translations[currentLang].credits}</div>
+                    </div>
+                    <div class="marks-input">
+                        <input type="number" 
+                               class="marks" 
+                               min="0" 
+                               max="100" 
+                               step="0.1"
+                               placeholder="${translations[currentLang].marks}"
+                               data-index="${index}"
+                               data-credits="${course.credits}">
+                    </div>
+                    <div class="gp-display" data-gp="${index}">-</div>
+                `;
+                courseGrid.appendChild(courseItem);
+            });
+
+            // Add event listeners to marks inputs
+            document.querySelectorAll('.marks').forEach(input => {
+                input.addEventListener('input', function() {
+                    const index = this.dataset.index;
+                    const marks = parseFloat(this.value);
+                    const gpDisplay = document.querySelector(`[data-gp="${index}"]`);
+                    
+                    if (!isNaN(marks) && marks >= 0 && marks <= 100) {
+                        const gp = calculateGP(marks);
+                        gpDisplay.textContent = gp.toFixed(2);
+                    } else {
+                        gpDisplay.textContent = '-';
+                    }
+                });
+            });
+        }
+
+        // ==========================================
+        // CALCULATE GPA
+        // ==========================================
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const marksInputs = document.querySelectorAll('.marks');
+            let totalScore = 0;
+            let totalCredits = 0;
+            let validCount = 0;
+
+            marksInputs.forEach(input => {
+                const marks = parseFloat(input.value);
+                const credits = parseFloat(input.dataset.credits);
+                
+                if (!isNaN(marks) && marks >= 0 && marks <= 100) {
+                    const gp = calculateGP(marks);
+                    const score = gp * credits;
+                    totalScore += score;
+                    totalCredits += credits;
+                    validCount++;
+                }
+            });
+
+            if (validCount === 0) {
+                alert(currentLang === 'sw' ? 'Tafadhali ingiza marks!' : 'Please enter marks!');
+                return;
+            }
+
+            const gpa = totalScore / totalCredits;
+            const letterGrade = getLetterGrade(gpa);
+            const avgGP = totalScore / totalCredits;
+
+            // Display results
+            document.getElementById('semesterGPA').textContent = gpa.toFixed(2);
+            document.getElementById('semesterGrade').textContent = letterGrade;
+            document.getElementById('totalScore').textContent = totalScore.toFixed(2);
+            document.getElementById('avgGP').textContent = avgGP.toFixed(2);
+
+            // Status card
+            const statusCard = document.getElementById('statusCard');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusTitle = document.getElementById('statusTitle');
+            const statusMessage = document.getElementById('statusMessage');
+
+            if (gpa >= 3.8) {
+                statusCard.className = 'status-card safe';
+                statusIcon.textContent = '🎉';
+                statusTitle.textContent = translations[currentLang].safeZone;
+                statusMessage.textContent = translations[currentLang].safeMessage;
+                document.getElementById('targetSection').classList.add('hidden');
+            } else {
+                statusCard.className = 'status-card danger';
+                statusIcon.textContent = '⚠️';
+                statusTitle.textContent = translations[currentLang].dangerZone;
+                statusMessage.textContent = translations[currentLang].dangerMessage;
+                
+                // Calculate target for next semester
+                showTargetRecommendation(gpa, totalCredits);
+            }
+
+            document.getElementById('resultsSection').classList.add('show');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        function showTargetRecommendation(currentGPA, currentCredits) {
+            const targetSection = document.getElementById('targetSection');
+            const targetInfo = document.getElementById('targetInfo');
+            const targetGPA = 3.8;
+            
+            // Assuming next semester has similar credits (average ~65.8)
+            const nextSemesterCredits = 65.8;
+            const totalCreditsAfter = currentCredits + nextSemesterCredits;
+            
+            // Calculate required GPA for next semester
+            // targetGPA = (currentGPA * currentCredits + nextGPA * nextCredits) / totalCredits
+            // nextGPA = (targetGPA * totalCredits - currentGPA * currentCredits) / nextCredits
+            const requiredNextGPA = (targetGPA * totalCreditsAfter - currentGPA * currentCredits) / nextSemesterCredits;
+            
+            targetSection.classList.remove('hidden');
+            
+            if (requiredNextGPA > 5.0) {
+                targetInfo.innerHTML = currentLang === 'sw' 
+                    ? translations.sw.targetImpossible
+                    : translations.en.targetImpossible;
+            } else if (requiredNextGPA <= 0) {
+                targetInfo.innerHTML = currentLang === 'sw'
+                    ? translations.sw.targetAlready
+                    : translations.en.targetAlready;
+            } else {
+                targetInfo.innerHTML = `
+                    ${translations[currentLang].targetNeed} 
+                    <div class="target-gpa">${requiredNextGPA.toFixed(2)}</div>
+                    ${translations[currentLang].targetNext}
+                `;
+            }
+        }
+
+        // ==========================================
+        // RESET BUTTON
+        // ==========================================
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            if (confirm(currentLang === 'sw' ? 'Je, una uhakika unataka kufuta data zote?' : 'Are you sure you want to reset all data?')) {
+                document.querySelectorAll('.marks').forEach(input => {
+                    input.value = '';
+                });
+                document.querySelectorAll('[data-gp]').forEach(el => {
+                    el.textContent = '-';
+                });
+                document.getElementById('resultsSection').classList.remove('show');
+            }
+        });
+
+        // ==========================================
+        // INITIALIZE
+        // ==========================================
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                updateLanguage(this.dataset.lang);
+            });
+        });
+
+        // Set initial language
+        updateLanguage('sw');
+    </script>
+</body>
+</html>
